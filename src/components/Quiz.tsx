@@ -51,7 +51,7 @@ const Quiz = () => {
         <p>{questions.length > 0 && question}</p>
         <div className="flex flex-column gap-3">
           {answers.map(({ answer, isCorrect }, index) => (
-            <div key={`answer-${index}`}>
+            <div key={`answer-${index}`} className="flex center">
               <RadioButton
                 type="radio"
                 name="answers"
@@ -63,7 +63,9 @@ const Quiz = () => {
               />
               <label
                 htmlFor={`answer-${index}`}
-                className={`ml-2 ${color(isCorrect)} cursor-pointer`}
+                className={`ml-2 ${color(
+                  isCorrect
+                )} cursor-pointer flex-grow-1`}
               >
                 {answer}
               </label>
