@@ -51,7 +51,7 @@ const Quiz = () => {
         <p>{questions.length > 0 && question}</p>
         <div className="flex flex-column gap-3">
           {answers.map(({ answer, isCorrect }, index) => (
-            <div key={`answer-${index}`} className="flex center">
+            <div key={`answer-${index}`} className="flex align-items-center">
               <RadioButton
                 type="radio"
                 name="answers"
