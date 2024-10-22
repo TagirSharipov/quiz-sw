@@ -1,18 +1,17 @@
 import { ProgressBar as PrimeProgressBar } from "primereact/progressbar";
 import { Question, UserAnswer } from "../types";
 
-export default function ProgressBar({
-  answers,
-  questions,
-}: {
+type Props = {
   answers: UserAnswer[];
   questions: Question[];
-}) {
-  const value = answers.filter(a => a.confirmed).length;
+};
+
+export default function ProgressBar({ answers, questions }: Props) {
+  const answersLength = answers.filter(a => a.confirmed).length;
 
   return (
     <PrimeProgressBar
-      value={Math.ceil((value / questions.length) * 100)}
+      value={Math.ceil((answersLength / questions.length) * 100)}
       displayValueTemplate={() => ""}
     />
   );

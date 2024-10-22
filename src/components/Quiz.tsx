@@ -44,9 +44,9 @@ const Quiz = () => {
     <div>
       <ProgressBar answers={userAnswers} questions={questions} />
       <Card className="mt-3">
-        <p className="text-right">
+        <div className="text-right">
           Domanda {currentIndex + 1} da {questions.length}
-        </p>
+        </div>
 
         <p>{questions.length > 0 && question}</p>
         <div className="flex flex-column gap-3">
