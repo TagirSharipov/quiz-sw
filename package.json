@@ -24,7 +24,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://util.colella.net/om/",
+  "proxy": "https://om.colella.net/",
   "eslintConfig": {
     "extends": [
       "react-app",

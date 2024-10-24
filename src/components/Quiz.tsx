@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { RadioButton } from "primereact/radiobutton";
 import ProgressBar from "./ProgressBar";
+import Results from "./Results";
 
 const Quiz = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,7 +29,7 @@ const Quiz = () => {
 
       arr[currentIndex] = {
         response,
-        confirmed: false,
+        confirmed: true,
       };
 
       return arr;
@@ -39,6 +40,7 @@ const Quiz = () => {
     if (isCorrect) return "text-green-600";
     return "text-red-600";
   };
+  const finished = userAnswers.every(a => a.confirmed) && userAnswers.length === questions.length;
 
   return (
     <div>
@@ -91,6 +93,8 @@ const Quiz = () => {
           disabled={!confirmed || currentIndex === questions.length - 1}
         />
       </div>
+
+      {finished && <Results userAnswers={userAnswers} questions={questions} />}
     </div>
   );
 };
