@@ -12,7 +12,7 @@ export default function Results({ userAnswers, questions }: Props) {
     const correctAnswer = questions[index].answers.find(answer => answer.isCorrect)?.answer;
     return acc + (response === correctAnswer ? 1 : 0);
   }, 0);
-  
+
   return (
     <>
       
@@ -26,9 +26,9 @@ export default function Results({ userAnswers, questions }: Props) {
           
               
           <Card className="mt-3" key={`question-${index}`}>
-            <div className="text-right">Domanda {index + 1}</div>
-            <p>{group}</p>
-            <p>{question}</p>
+            <div className="text-right">Domanda {index + 1} - {group}</div>
+  
+            <div className="font-medium">{question}</div>
             <div className="flex flex-column gap-3">
               <ul>
                 {answers.map(({ answer, isCorrect }, index) => (
