@@ -13,52 +13,52 @@ export default function Results({ userAnswers, questions }: Props) {
     return acc + (response === correctAnswer ? 1 : 0);
   }, 0);
 
+  const scorePercentile = Math.floor(score / questions.length * 100);
   return (
-    <>
-      
-        <h2 className="text-left">Il tuo punteggio: {Math.floor(score / questions.length * 100)} %</h2>
-     
-      {questions.map((q, index) => {
-        const { answers = [], question = "", group = "" } = q || {};
-        const { response = ""} = userAnswers[index] || {};
+      <>
+        <h2 className="text-left">Il tuo punteggio: {scorePercentile} % {scorePercentile >= 60 ? "Esame superato" : "Esame fallito"}</h2>
 
-        return (
-          
-              
-          <Card className="mt-3" key={`question-${index}`}>
-            <div className="text-right">Domanda {index + 1} - {group}</div>
-  
-            <div className="font-medium">{question}</div>
-            <div className="flex flex-column gap-3">
-              <ul>
-                {answers.map(({ answer, isCorrect }, index) => (
-                  <li
-                    key={`answer-${index}`}
-                    className="flex align-items-center"
-                  >
-                    <span>- {answer}</span>
-                    {response === answer && (
-                      <Tag
-                        className="ml-2"
-                        severity={isCorrect ? "success" : "danger"}
-                      >
-                        Risposta
-                      </Tag>
-                    )}
-                    {Boolean(isCorrect) && (
-                      <Tag className="ml-2" severity="success">
-                        ✔
-                      </Tag>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Card>
-          
-          
-        );
-      })}
-    </>
+        {questions.map((q, index) => {
+          const {answers = [], question = "", group = ""} = q || {};
+          const {response = ""} = userAnswers[index] || {};
+
+          return (
+
+
+              <Card className="mt-3" key={`question-${index}`}>
+                <div className="text-right">Domanda {index + 1} - {group}</div>
+
+                <div className="font-medium">{question}</div>
+                <div className="flex flex-column gap-3">
+                  <ul>
+                    {answers.map(({answer, isCorrect}, index) => (
+                        <li
+                            key={`answer-${index}`}
+                            className="flex align-items-center"
+                        >
+                          <span>- {answer}</span>
+                          {response === answer && (
+                              <Tag
+                                  className="ml-2"
+                                  severity={isCorrect ? "success" : "danger"}
+                              >
+                                Risposta
+                              </Tag>
+                          )}
+                          {Boolean(isCorrect) && (
+                              <Tag className="ml-2" severity="success">
+                                ✔
+                              </Tag>
+                          )}
+                        </li>
+                    ))}
+                  </ul>
+                </div>
+              </Card>
+
+
+          );
+        })}
+      </>
   );
 }

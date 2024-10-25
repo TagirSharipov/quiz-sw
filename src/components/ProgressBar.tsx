@@ -12,7 +12,7 @@ export default function ProgressBar({ answers, questions }: Props) {
   return (
     <PrimeProgressBar
       value={Math.ceil((answersLength / questions.length) * 100)}
-      displayValueTemplate={() => ""}
+      displayValueTemplate={() => `${answersLength}/${questions.length}`}
     />
   );
 }

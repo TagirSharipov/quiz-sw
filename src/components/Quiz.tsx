@@ -46,9 +46,9 @@ const Quiz = () => {
     <div>
       <ProgressBar answers={userAnswers} questions={questions} />
       <Card className="mt-3">
-        <div className="text-right">
+        {/*<div className="text-right">
           Domanda {currentIndex + 1} da {questions.length}
-        </div>
+        </div>*/}
 
         <p>{questions.length > 0 && question}</p>
         <div className="flex flex-column gap-3">
@@ -82,11 +82,7 @@ const Quiz = () => {
           disabled={currentIndex === 0}
           onClick={() => setCurrentIndex(prev => prev - 1)}
         />
-        <Button
-          label="Conferma Risposta"
-          onClick={onConfirm}
-          disabled={!response || confirmed}
-        />
+
         <Button
           label="Avanti"
           onClick={() => setCurrentIndex(prev => prev + 1)}
