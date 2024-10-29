@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useQuestions from "../hooks/useQuestions";
 import { UserAnswer } from "../types";
 import { Button } from "primereact/button";
@@ -10,17 +10,39 @@ import Results from "./Results";
 const Quiz = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
-  const questions = useQuestions();
+  const [questions, reFetchQuestions] = useQuestions();
+
+  const finished = useMemo(
+    () =>
+      questions.length > 0 &&
+      userAnswers.every(a => a.confirmed) &&
+      userAnswers.length === questions.length,
+    [userAnswers, questions]
+  );
+
+  useEffect(() => {
+    console.log(finished, "finished");
+    if (finished && "serviceWorker" in navigator) {
+      navigator.serviceWorker.controller?.postMessage({
+        action: "clear-cache",
+      });
+    }
+  }, [finished]);
 
   const { answers = [], question = "" } = questions[currentIndex] || {};
   const { response = "", confirmed = false } = userAnswers[currentIndex] || {};
 
-  const onConfirm = () => {
+  /*   const onConfirm = () => {
     setUserAnswers(prev => {
       const arr = [...prev];
       arr[currentIndex] = { ...arr[currentIndex], confirmed: true };
       return arr;
     });
+  }; */
+  const restart = () => {
+    setCurrentIndex(0);
+    setUserAnswers([]);
+    reFetchQuestions();
   };
 
   const onAnswer = (response: string) =>
@@ -40,7 +62,6 @@ const Quiz = () => {
     if (isCorrect) return "text-green-600";
     return "text-red-600";
   };
-  const finished = userAnswers.every(a => a.confirmed) && userAnswers.length === questions.length;
 
   return (
     <div>
@@ -51,9 +72,9 @@ const Quiz = () => {
         </div>*/}
 
         <p>{questions.length > 0 && question}</p>
-        <div className="flex flex-column gap-3">
+        <div className="flex flex-column gap-1">
           {answers.map(({ answer, isCorrect }, index) => (
-            <div key={`answer-${index}`} className="flex align-items-center">
+            <div key={`answer-${index}`} className="flex align-items-center ">
               <RadioButton
                 type="radio"
                 name="answers"
@@ -67,7 +88,9 @@ const Quiz = () => {
                 htmlFor={`answer-${index}`}
                 className={`ml-2 ${color(
                   isCorrect
-                )} cursor-pointer flex-grow-1`}
+                )} cursor-pointer flex-grow-1 border-0 ${
+                  confirmed ? "" : "hover:border-200"
+                } border-1 border-round p-2`}
               >
                 {answer}
               </label>
@@ -88,9 +111,23 @@ const Quiz = () => {
           onClick={() => setCurrentIndex(prev => prev + 1)}
           disabled={!confirmed || currentIndex === questions.length - 1}
         />
+              {finished && <Button
+
+            label="Ricomincia"
+            onClick={restart}
+          />}
       </div>
 
-      {finished && <Results userAnswers={userAnswers} questions={questions} />}
+      {finished && (
+        <>
+          <Results userAnswers={userAnswers} questions={questions} />
+          <Button
+            className="mt-3"
+            label="Ricomincia"
+            onClick={restart}
+          />
+        </>
+      )}
     </div>
   );
 };
