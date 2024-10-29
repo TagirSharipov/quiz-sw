@@ -20,25 +20,25 @@ reportWebVitals();
 register();
 
 async function register() {
-  console.log("Registering service worker");
+  //console.log("Registering service worker");
   
   if ('serviceWorker' in navigator) {
     try {
       // Change the service worker URL to see what happens when the SW doesn't exist
       const registration = await navigator.serviceWorker.register("./sw.js");
-      console.log("Service worker registered: ", registration);
+      //console.log("Service worker registered: ", registration);
       if (registration.installing) {
-        console.log('Service worker installing');
+        //console.log('Service worker installing');
       } else if (registration.waiting) {
-        console.log('Service worker installed');
+        //console.log('Service worker installed');
       } else if (registration.active) {
-        console.log('Service worker active');
+        //console.log('Service worker active');
       }
        
     } catch (error) {
-      console.log("Error while registering: " + (error as Error).message);
+      //console.log("Error while registering: " + (error as Error).message);
     }    
   } else {
-    console.log("Service workers API not available");
+    //console.log("Service workers API not available");
   }
 }; 

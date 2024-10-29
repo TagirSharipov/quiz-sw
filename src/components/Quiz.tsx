@@ -21,7 +21,7 @@ const Quiz = () => {
   );
 
   useEffect(() => {
-    console.log(finished, "finished");
+
     if (finished && "serviceWorker" in navigator) {
       navigator.serviceWorker.controller?.postMessage({
         action: "clear-cache",

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchQuestions } from "../ api/api";
 import { Question } from "../types";
-import { get } from "http";
+
 
 export default function useQuestions() {
   const [questions, setQuestions] = useState<Question[]>([]);
