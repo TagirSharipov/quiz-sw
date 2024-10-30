@@ -1,9 +1,10 @@
 export type Question = {
-  id: number;
-  group: string;
-  order: number;
+  category: string;
+  difficulty:string;
   question: string;
-  answers: { answer: string; isCorrect: boolean }[];
+  correct_answer: string;
+  incorrect_answers: string[];
+  answers: string[];
 };
 
 export type UserAnswer = {

@@ -11,8 +11,9 @@ export default function useQuestions() {
     fetchQuestions()
       .then(res => res.json())
       .then(response => {
-        setQuestions(response);
-        fetched.current = true;
+
+         setQuestions(response.results);
+
       })
       .catch(err => {
         throw err;
@@ -24,9 +25,37 @@ export default function useQuestions() {
   }, [getQuestions]);
 
   useEffect(() => {
-    if (fetched.current) return;
-    getQuestions();
+
+
+    fetchQuestions()
+    .then(res => {
+      //if (!res.ok) throw new Error("Failed to fetch questions");
+      return res.json();})
+    .then(response => { 
+
+      if ( !fetched.current) setQuestions(mixAnswers(response.results || []));
+      fetched.current = true;
+    })
+    .catch(err => {
+      throw err;
+    });
+   
+
   }, [fetched, getQuestions]);
 
   return [questions, reFetchQuestions] as const;
+}
+const mixAnswers = (questions: Question[]) => {
+  const res = [...questions];
+ return res.map(q => {
+    const { incorrect_answers = [], correct_answer = '' } = q;
+    const i = Math.floor(Math.random() * (incorrect_answers?.length ));
+  
+    const answers = [...incorrect_answers]
+    answers.splice(i, 0, correct_answer);
+    return {...q, answers};
+  });
+
+
+ 
 }

@@ -1,7 +1,5 @@
 import { Card } from "primereact/card";
 import { Question, UserAnswer } from "../types";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 type Props = {
   userAnswers: UserAnswer[];
@@ -9,7 +7,7 @@ type Props = {
 };
 export default function Results({ userAnswers, questions }: Props) {
   const score = userAnswers.reduce((acc, { response }, index) => {
-    const correctAnswer = questions[index].answers.find(answer => answer.isCorrect)?.answer;
+    const correctAnswer = questions[index].correct_answer;
     return acc + (response === correctAnswer ? 1 : 0);
   }, 0);
 
@@ -19,33 +17,32 @@ export default function Results({ userAnswers, questions }: Props) {
         <h2 className="text-left">Il tuo punteggio: {scorePercentile} % {scorePercentile >= 60 ? "Esame superato" : "Esame fallito"}</h2>
 
         {questions.map((q, index) => {
-          const {answers = [], question = "", group = ""} = q || {};
+          const {answers = [], correct_answer = '', question = "", category = ""} = q || {};
           const {response = ""} = userAnswers[index] || {};
-
+          console.log("response", response, correct_answer);
+          
           return (
-
-
               <Card className="mt-3" key={`question-${index}`}>
-                <div className="text-right">Domanda {index + 1} - {group}</div>
+                <div className="text-right">Domanda {index + 1} - {category}</div>
 
-                <div className="font-medium">{question}</div>
+                <div className="font-medium" dangerouslySetInnerHTML={{__html: question}}/>
                 <div className="flex flex-column gap-3">
                   <ul>
-                    {answers.map(({answer, isCorrect}, index) => (
+                    {answers.map((answer, index) => (
                         <li
                             key={`answer-${index}`}
                             className="flex align-items-center"
                         >
-                          <span>- {answer}</span>
+                          <span>-</span><span dangerouslySetInnerHTML={{__html: answer}}></span>
                           {response === answer && (
                               <Tag
                                   className="ml-2"
-                                  severity={isCorrect ? "success" : "danger"}
+                                  severity={correct_answer === response ? "success" : "danger"}
                               >
                                 Risposta
                               </Tag>
                           )}
-                          {Boolean(isCorrect) && (
+                          {(answer === correct_answer) && (
                               <Tag className="ml-2" severity="success">
                                 ✔
                               </Tag>

@@ -17,7 +17,7 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-register();
+//register();
 
 async function register() {
   //console.log("Registering service worker");
