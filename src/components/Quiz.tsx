@@ -1,20 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
-import useQuestions from "../hooks/useQuestions";
-import { UserAnswer } from "../types";
+
+import { Question, UserAnswer } from "../types";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { RadioButton } from "primereact/radiobutton";
 import ProgressBar from "./ProgressBar";
 import Results from "./Results";
+import {
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { fetchQuestions } from "../ api/api";
+import Answer from "./Answer";
 
 const Quiz = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
-  const [questions = [], reFetchQuestions] = useQuestions();
+
+  const queryClient = useQueryClient();
+
+  // Queries
+  const {
+    isPending,
+    data: questions,
+  } = useQuery({
+    queryKey: ["questions"],
+    queryFn: fetchQuestions,
+    initialData: [],
+    select: shuffleAnswers,
+  });
 
   const finished = useMemo(
     () =>
-      questions.length > 0 &&
+      questions?.length > 0 &&
       userAnswers.every(a => a.confirmed) &&
       userAnswers.length === questions.length,
     [userAnswers, questions]
@@ -44,9 +61,10 @@ const Quiz = () => {
   }; */
 
   const restart = () => {
-    setCurrentIndex(0);
-    setUserAnswers([]);
-    reFetchQuestions();
+    queryClient.invalidateQueries({ queryKey: ["questions"] }).then(() => {
+      setCurrentIndex(0);
+      setUserAnswers([]);
+    });
   };
 
   const onAnswer = (response: string) =>
@@ -61,11 +79,7 @@ const Quiz = () => {
       return arr;
     });
 
-  const color = (isCorrect: boolean) => {
-    if (!confirmed) return "";
-    if (isCorrect) return "text-green-600";
-    return "text-red-600";
-  };
+  if (isPending) return <div>Loading...</div>;
 
   return (
     <div>
@@ -78,49 +92,36 @@ const Quiz = () => {
         <p dangerouslySetInnerHTML={{ __html: question }} />
         <div className="flex flex-column gap-1">
           {answers.map((answer, index) => (
-            <div key={`answer-${index}`} className="flex align-items-center ">
-              <RadioButton
-                type="radio"
-                name="answers"
-                inputId={`answer-${index}`}
-                value={response}
-                checked={response === answer}
-                disabled={confirmed}
-                onChange={() => onAnswer(answer)}
-              />
-              <label
-                htmlFor={`answer-${index}`}
-                className={`ml-2 ${color(
-                  correct_answer === answer
-                )} cursor-pointer flex-grow-1 border-0 ${
-                  confirmed ? "" : "hover:border-200"
-                } border-1 border-round p-2`}
-                dangerouslySetInnerHTML={{ __html: answer }}
-              />
-            </div>
+            <Answer
+              key={`answer${index}`}
+              answer={answer}
+              onAnswer={onAnswer}
+              correct_answer={correct_answer}
+              response={response}
+            />
           ))}
         </div>
       </Card>
 
       <div className="card flex flex-wrap justify-content-center gap-3 mt-3">
         <Button
-          label="Indietro"
+          label="Back"
           disabled={currentIndex === 0}
           onClick={() => setCurrentIndex(prev => prev - 1)}
         />
 
         <Button
-          label="Avanti"
+          label="Next"
           onClick={() => setCurrentIndex(prev => prev + 1)}
           disabled={!confirmed || currentIndex === questions.length - 1}
         />
-        {finished && <Button label="Ricomincia" onClick={restart} />}
+        {finished && <Button label="Restart" onClick={restart} />}
       </div>
 
       {finished && (
         <>
           <Results userAnswers={userAnswers} questions={questions} />
-          <Button className="mt-3" label="Ricomincia" onClick={restart} />
+          <Button className="mt-3" label="Restart" onClick={restart} />
         </>
       )}
     </div>
@@ -128,3 +129,15 @@ const Quiz = () => {
 };
 
 export default Quiz;
+
+const shuffleAnswers = (questions: Question[]) => {
+  const res = [...questions];
+  return res.map(q => {
+    const { incorrect_answers = [], correct_answer = "" } = q;
+    const i = Math.floor(Math.random() * incorrect_answers?.length);
+
+    const answers = [...incorrect_answers];
+    answers.splice(i, 0, correct_answer);
+    return { ...q, answers };
+  });
+};

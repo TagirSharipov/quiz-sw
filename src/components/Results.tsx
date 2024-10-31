@@ -14,16 +14,16 @@ export default function Results({ userAnswers, questions }: Props) {
   const scorePercentile = Math.floor(score / questions.length * 100);
   return (
       <>
-        <h2 className="text-left">Il tuo punteggio: {scorePercentile} % {scorePercentile >= 60 ? "Esame superato" : "Esame fallito"}</h2>
+        <h2 className="text-left">Your score: {scorePercentile} % </h2>
 
         {questions.map((q, index) => {
           const {answers = [], correct_answer = '', question = "", category = ""} = q || {};
           const {response = ""} = userAnswers[index] || {};
-          console.log("response", response, correct_answer);
+
           
           return (
               <Card className="mt-3" key={`question-${index}`}>
-                <div className="text-right">Domanda {index + 1} - {category}</div>
+                <div className="text-right">Question {index + 1} - {category}</div>
 
                 <div className="font-medium" dangerouslySetInnerHTML={{__html: question}}/>
                 <div className="flex flex-column gap-3">
@@ -39,7 +39,7 @@ export default function Results({ userAnswers, questions }: Props) {
                                   className="ml-2"
                                   severity={correct_answer === response ? "success" : "danger"}
                               >
-                                Risposta
+                                Answer
                               </Tag>
                           )}
                           {(answer === correct_answer) && (

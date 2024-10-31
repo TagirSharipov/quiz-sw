@@ -1,28 +1,21 @@
+let cacheName = "v1-pwa-assets";
+const endpoint = "https://opentdb.com/api.php?amount=10";
+
+
 self.addEventListener("install", event => {
-  console.log("Service Worker: Install event");
-  /* event.waitUntil(
-    caches
-      .open("quiz")
-      .then(cache => {
-        console.log("Service Worker: Caching assets");
-        return cache.addAll([
-          "https://opentdb.com/api.php?amount=10", // Add more resources if needed
-        ]);
-      })
-      .catch(error => {
-        console.error("Service Worker: Caching failed", error);
-      })
-  );  */
+  // console.log("Service Worker: Install event");
 });
 
+
 self.addEventListener("fetch", event => {
-  console.log("Service Worker: Fetch event for ", event.request.url);
+  caches.keys().then(cacheNames => {console.log("Service Worker: Cache names", cacheNames)});
+  // console.log("Service Worker: Fetch event for ", event.request.url);
   event.respondWith(
     caches
-      .match(event.request)
+      .match(event.request.url)
       .then(cachedResponse => {
         if (cachedResponse) {
-          console.log("Service Worker: Found in cache", event.request.url);
+          // console.log("Service Worker: Found in cache", event.request.url);
           return cachedResponse;
         }
         if (!navigator.onLine) {
@@ -34,17 +27,16 @@ self.addEventListener("fetch", event => {
           });
         }
   
-        console.log("Service Worker: Network request for ", event.request.url);
+        //console.log("Service Worker: Network request for ", event.request.url);
         return fetch(event.request).then(response => {
-          console.log("Service Worker: Response from network", response);
-          let cacheName = "pwa-assets";
-          if (event.request.url === "https://opentdb.com/api.php?amount=10"/* self.location.origin + "/api.php?mode=p" */) cacheName = "quiz";
-          if (response.ok) return caches.open(cacheName).then(cache => {
-            console.log("Service Worker: Caching new resource", event.request.url);
-            cache.put(event.request.url, response.clone());
+          //console.log("Service Worker: Response from network", response);
 
+          if (event.request.url === endpoint) cacheName = "quiz";
+          if (response.ok) return caches.open(cacheName).then(cache => {
+            // console.log("Service Worker: Caching new resource", event.request.url);
+            cache.put(event.request.url, response.clone());
+            return response;
           });
-          return response;
         });
       })
       .catch(error => {
@@ -62,7 +54,7 @@ self.addEventListener("activate", event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log("Service Worker: Deleting old cache", cacheName);
+            //console.log("Service Worker: Deleting old cache", cacheName);
             return caches.delete(cacheName);
           }
           return null;
@@ -73,7 +65,7 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("message", event => {
-  console.log("Service Worker: Message event", event.data);
+  //console.log("Service Worker: Message event", event.data);
   if (event.data && event.data.action === "clear-cache") {
     console.log("Service Worker: Clearing cache");
     caches.delete("quiz");

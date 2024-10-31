@@ -6,7 +6,7 @@ import { Question } from "../types";
 export default function useQuestions() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const fetched = useRef(false); //to prevent occasional data re-fetching. Cab be removed if not needed
-  
+  /* 
   const getQuestions = useCallback(() => {
     fetchQuestions()
       .then(res => res.json())
@@ -55,7 +55,7 @@ const mixAnswers = (questions: Question[]) => {
     answers.splice(i, 0, correct_answer);
     return {...q, answers};
   });
-
+ */
 
  
 }
