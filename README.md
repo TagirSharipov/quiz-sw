@@ -1,11 +1,9 @@
-# Quiz App with service workers
+# Quiz App with service worker
 
-This project is a Progressive Web App (PWA) built with Create React App. It leverages service workers to enhance the user experience by providing offline capabilities, handling unfinished quizzes, and managing rate limits.
+This project is a Progressive Web App (PWA) built with React. It leverages service workers to enhance the user experience by providing offline capabilities, handling unfinished quizzes, and managing rate limits.
 ## Features
 ### Offline Handling
 As a PWA, the Quiz App can function offline once it has been installed. This means that users can access the app and its cached content even without an internet connection, providing a seamless experience. The service worker caches essential assets and quiz data, ensuring that the app remains usable and responsive even when offline.
-
-## Handling Unfinished Quizzes and Managing Rate Limits
 
 ### Handling Unfinished Quizzes
 
@@ -17,7 +15,8 @@ The service worker ensures that the quiz data is cached and can be accessed even
 
 ### Managing Rate Limits (Error 429 "Too Many Requests")
 
-The service worker helps manage rate limits by caching the quiz data and serving it from the cache if a request is made within a short period. This reduces the number of requests sent to the endpoint, helping to avoid hitting the rate limit.
+The endpoint gives the error if a request is made within a short period (5 sec).
+The service worker helps manage rate limits by caching the quiz data and serving it from the cache if the quiz is unresolved. This reduces the number of requests sent to the endpoint, helping to avoid hitting the rate limit.
 
 1. **Cache-First Strategy**: The service worker uses a cache-first strategy, where it first checks if the requested resource is available in the cache. If it is, the cached response is returned, reducing the need to make frequent network requests.
 
@@ -40,6 +39,8 @@ return fetch(event.request).then(response => {
     return response;
   }
 });
+```
+
 This ensures that the quiz data is stored in the cache and can be retrieved later if needed.
 
 #### Clearing Cache on Quiz Completion
